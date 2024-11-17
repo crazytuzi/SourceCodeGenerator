@@ -124,21 +124,21 @@ namespace SourceCodeGeneratorUbtPlugin
 
             List<Task?> tasks = new();
 
-            foreach (var package in Session.Packages)
+            foreach (var module in Session.Modules)
             {
-                if (package.Module.ModuleType != UHTModuleType.EngineRuntime &&
-                    package.Module.ModuleType != UHTModuleType.GameRuntime)
+                if (module.Module.ModuleType != UHTModuleType.EngineRuntime &&
+                    module.Module.ModuleType != UHTModuleType.GameRuntime)
                 {
                     continue;
                 }
 
-                if (ExportModule.All(module =>
-                        string.Compare(module, package.Module.Name, StringComparison.OrdinalIgnoreCase) != 0))
+                if (ExportModule.All(x =>
+                        string.Compare(x, module.Module.Name, StringComparison.OrdinalIgnoreCase) != 0))
                 {
                     continue;
                 }
 
-                QueueClassExports(package, tasks);
+                QueueClassExports(module.ScriptPackage, tasks);
             }
 
             var waitTasks = tasks.Where(Task => Task != null).Cast<Task>().ToArray();
@@ -367,7 +367,7 @@ namespace SourceCodeGeneratorUbtPlugin
                     builder.Append(GenerateInclude($"{value}{BindingSuffix}"));
                 }
 
-                var fileName = Factory.MakePath(package.Key, HeaderSuffix);
+                var fileName = Factory.MakePath(package.Key.Module, HeaderSuffix);
 
                 SaveIfChanged(fileName, builder);
             }
@@ -759,7 +759,7 @@ namespace SourceCodeGeneratorUbtPlugin
 
         private string GetHeaderFile(UhtClass classObj)
         {
-            return Path.Combine(HeaderPath[classObj.Package.ShortName], classObj.HeaderFile.FilePath);
+            return Path.Combine(HeaderPath[classObj.Package.Module.ShortName], classObj.HeaderFile.FilePath);
         }
 
         private static string GenerateInclude(string file)
