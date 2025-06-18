@@ -62,6 +62,8 @@ namespace SourceCodeGeneratorUbtPlugin
 
         private const string HeaderSuffix = ".header.inl";
 
+        private readonly HashSet<string> ClassNameBlacklist = new();
+
         public SourceCodeGenerator(IUhtExportFactory factory)
         {
             Factory = factory;
@@ -117,6 +119,18 @@ namespace SourceCodeGeneratorUbtPlugin
                         foreach (var value in Values)
                         {
                             ExportModule.Add(value);
+                        }
+                    }
+
+                    if (SettingConfigHierarchySection.TryGetValues("ClassBlacklist", out var blacklistValues))
+                    {
+                        foreach (var className in blacklistValues)
+                        {
+                            if (!string.IsNullOrEmpty(className))
+                            {
+                                ClassNameBlacklist.Add(className);
+                                Console.WriteLine($"[BlackList] {className} will be skipped.");
+                            }
                         }
                     }
                 }
@@ -179,6 +193,11 @@ namespace SourceCodeGeneratorUbtPlugin
         /// <returns>True if the class should be exported, false if not</returns>
         protected virtual bool CanExportClass(UhtClass classObj)
         {
+            if (ClassNameBlacklist.Contains(classObj.SourceName))
+            {
+                return false;
+            }
+
             return !classObj.ClassFlags.HasAnyFlags(EClassFlags.Interface) &&
                    IsClassTypeSupported(classObj);
         }
@@ -270,14 +289,6 @@ namespace SourceCodeGeneratorUbtPlugin
             if (property is UhtObjectProperty objectProperty)
             {
                 if (!IsClassTypeSupported(objectProperty.Class))
-                {
-                    return false;
-                }
-            }
-
-            if (property is UhtObjectPtrProperty objectPtrProperty)
-            {
-                if (!IsClassTypeSupported(objectPtrProperty.Class))
                 {
                     return false;
                 }
@@ -462,10 +473,6 @@ namespace SourceCodeGeneratorUbtPlugin
                 {
                     DependencyClasses.Add(classProperty.MetaClass);
                 }
-            }
-            else if (property is UhtObjectPtrProperty objectPtrProperty)
-            {
-                DependencyClasses.Add(objectPtrProperty.Class);
             }
             else if (property is UhtObjectProperty objectProperty)
             {
