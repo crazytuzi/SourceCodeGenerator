@@ -129,7 +129,6 @@ namespace SourceCodeGeneratorUbtPlugin
                             if (!string.IsNullOrEmpty(className))
                             {
                                 ClassNameBlacklist.Add(className);
-                                Console.WriteLine($"[BlackList] {className} will be skipped.");
                             }
                         }
                     }
