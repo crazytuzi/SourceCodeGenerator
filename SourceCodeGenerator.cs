@@ -275,14 +275,6 @@ namespace SourceCodeGeneratorUbtPlugin
                 }
             }
 
-            if (property is UhtObjectPtrProperty objectPtrProperty)
-            {
-                if (!IsClassTypeSupported(objectPtrProperty.Class))
-                {
-                    return false;
-                }
-            }
-
             if (property is UhtInterfaceProperty interfaceProperty)
             {
                 if (interfaceProperty.InterfaceClass == interfaceProperty.Session.IInterface)
@@ -462,10 +454,6 @@ namespace SourceCodeGeneratorUbtPlugin
                 {
                     DependencyClasses.Add(classProperty.MetaClass);
                 }
-            }
-            else if (property is UhtObjectPtrProperty objectPtrProperty)
-            {
-                DependencyClasses.Add(objectPtrProperty.Class);
             }
             else if (property is UhtObjectProperty objectProperty)
             {
