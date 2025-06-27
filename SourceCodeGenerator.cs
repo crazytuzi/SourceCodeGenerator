@@ -62,6 +62,8 @@ namespace SourceCodeGeneratorUbtPlugin
 
         private const string HeaderSuffix = ".header.inl";
 
+        private readonly HashSet<string> ClassBlacklist = new();
+
         public SourceCodeGenerator(IUhtExportFactory factory)
         {
             Factory = factory;
@@ -117,6 +119,17 @@ namespace SourceCodeGeneratorUbtPlugin
                         foreach (var value in Values)
                         {
                             ExportModule.Add(value);
+                        }
+                    }
+
+                    if (SettingConfigHierarchySection.TryGetValues("ClassBlacklist", out var BlacklistValues))
+                    {
+                        foreach (var value in BlacklistValues)
+                        {
+                            if (!string.IsNullOrEmpty(value))
+                            {
+                                ClassBlacklist.Add(value);
+                            }
                         }
                     }
                 }
@@ -179,7 +192,8 @@ namespace SourceCodeGeneratorUbtPlugin
         /// <returns>True if the class should be exported, false if not</returns>
         protected virtual bool CanExportClass(UhtClass classObj)
         {
-            return !classObj.ClassFlags.HasAnyFlags(EClassFlags.Interface) &&
+            return !ClassBlacklist.Contains(classObj.SourceName) &&
+                   !classObj.ClassFlags.HasAnyFlags(EClassFlags.Interface) &&
                    IsClassTypeSupported(classObj);
         }
 
