@@ -372,7 +372,9 @@ namespace SourceCodeGeneratorUbtPlugin
                 var borrow = new BorrowStringBuilder(StringBuilderCache.Big);
 
                 var builder = borrow.StringBuilder;
-
+    
+                builder.Append(GeneratedHeaderComment);
+                
                 builder.Append("#pragma once\r\n\r\n");
 
                 foreach (var value in package.Value)
