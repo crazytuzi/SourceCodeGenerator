@@ -63,6 +63,13 @@ namespace SourceCodeGeneratorUbtPlugin
         private const string HeaderSuffix = ".header.inl";
 
         private readonly HashSet<string> ClassBlacklist = new();
+        
+        private const string GeneratedHeaderComment = 
+            "/*===========================================================================\n" +
+            "    Generated code exported from UnrealCSharp SourceCodeGenerator.\n" +
+            "    DO NOT modify this manually!\n" +
+            "===========================================================================*/\n" +
+            "\n";
 
         public SourceCodeGenerator(IUhtExportFactory factory)
         {
@@ -365,7 +372,9 @@ namespace SourceCodeGeneratorUbtPlugin
                 var borrow = new BorrowStringBuilder(StringBuilderCache.Big);
 
                 var builder = borrow.StringBuilder;
-
+    
+                builder.Append(GeneratedHeaderComment);
+                
                 builder.Append("#pragma once\r\n\r\n");
 
                 foreach (var value in package.Value)
@@ -381,6 +390,8 @@ namespace SourceCodeGeneratorUbtPlugin
 
         private bool ExportClass(StringBuilder builder, UhtClass classObj)
         {
+            builder.Append(GeneratedHeaderComment);
+            
             builder.Append("#pragma once\r\n\r\n" +
                            "PRAGMA_DISABLE_DEPRECATION_WARNINGS\r\n\r\n");
 
