@@ -1,4 +1,4 @@
-﻿#include "SourceCodeGenerator.h"
+#include "SourceCodeGenerator.h"
 #include "Features/IModularFeatures.h"
 #include "Misc/FileHelper.h"
 #include "UObject/CoreNet.h"
