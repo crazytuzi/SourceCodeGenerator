@@ -2,8 +2,7 @@
   <Import Project="SourceCodeGenerator.ubtplugin.csproj.props" Condition="Exists('SourceCodeGenerator.ubtplugin.csproj.props')" />
   <Import Project="$(EngineDir)\Source\Programs\Shared\UnrealEngine.csproj.props" />
   <PropertyGroup>
-    <!-- Inherit TargetFramework from the engine's UnrealEngine.csproj.props; fallback only for engines that don't define it -->
-    <TargetFramework Condition="'$(TargetFramework)' == ''">net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Configuration Condition=" '$(Configuration)' == '' ">Development</Configuration>
     <OutputType>Library</OutputType>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
