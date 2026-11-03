@@ -39,7 +39,7 @@ namespace SourceCodeGeneratorUbtPlugin
                     if (SettingConfigHierarchySection.TryGetValue("bEnableExport",
                             out var Value))
                     {
-                        if (bool.Parse(Value.ToLower()))
+                        if (bool.TryParse(Value, out var bEnableExport) && bEnableExport)
                         {
                             new SourceCodeGenerator(factory).Generate();
                         }
@@ -152,7 +152,7 @@ namespace SourceCodeGeneratorUbtPlugin
                     continue;
                 }
 
-                if (ExportModule.All(x =>
+                if (ExportModule.Count > 0 && ExportModule.All(x =>
                         string.Compare(x, module.Module.Name, StringComparison.OrdinalIgnoreCase) != 0))
                 {
                     continue;
@@ -446,7 +446,8 @@ namespace SourceCodeGeneratorUbtPlugin
                 }
             }
 
-            foreach (var DependencyClass in DependencyClasses)
+            foreach (var DependencyClass in DependencyClasses.OrderBy(x => x.EngineName,
+                                                                       StringComparer.Ordinal))
             {
                 builder.Append(GetInclude(DependencyClass));
             }
@@ -801,6 +802,11 @@ namespace SourceCodeGeneratorUbtPlugin
 
             var DirectoryInfo = new DirectoryInfo(InPathName);
 
+            if (!DirectoryInfo.Exists)
+            {
+                return;
+            }
+
             foreach (var Item in DirectoryInfo.GetFiles(Suffix))
             {
                 if (Item.DirectoryName != null)
@@ -827,6 +833,11 @@ namespace SourceCodeGeneratorUbtPlugin
 
             var DirectoryInfo = new DirectoryInfo(InPathName);
 
+            if (!DirectoryInfo.Exists)
+            {
+                return;
+            }
+
             foreach (var Item in DirectoryInfo.GetFiles(Suffix))
             {
                 if (Item.DirectoryName != null)
@@ -852,6 +863,11 @@ namespace SourceCodeGeneratorUbtPlugin
             var Suffix = "*.Build.cs";
 
             var DirectoryInfo = new DirectoryInfo(InPathName);
+
+            if (!DirectoryInfo.Exists)
+            {
+                return;
+            }
 
             foreach (var Item in DirectoryInfo.GetFiles(Suffix))
             {
