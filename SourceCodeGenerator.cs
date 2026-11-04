@@ -773,7 +773,19 @@ namespace SourceCodeGeneratorUbtPlugin
 
         private string GetHeaderFile(UhtClass classObj)
         {
-            return Path.Combine(HeaderPath[classObj.Package.Module.ShortName], classObj.HeaderFile.FilePath);
+            var IncludeFilePath = classObj.HeaderFile.IncludeFilePath;
+
+            if (IncludeFilePath.Length == 0)
+            {
+                IncludeFilePath = classObj.HeaderFile.ModuleRelativeFilePath;
+            }
+
+            if (IncludeFilePath.Length == 0)
+            {
+                IncludeFilePath = classObj.HeaderFile.FilePath;
+            }
+
+            return IncludeFilePath;
         }
 
         private static string GenerateInclude(string file)
